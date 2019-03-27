@@ -4,56 +4,75 @@
 #include <fstream>
 #include <string>
 
-
-int abs(int i){
+static int count = 0;
+int absVal(int i){
   if(i < 0)
     return (i*-1);
 
   else
     return i;
 }
-// result[i]=j; means queen at i-th row is placed at j-th column.
-// Queens placed at (x1, y1) and (x2,y2)
-// x1==x2 means same rows, y1==y2 means same columns, |x2-x1|==|y2-y1| means
-// they are placed in diagonals.
-int canPlace(int x2, int y2, int *result) {
-	// This function will check if queen can be placed (x2,y2), or we can
-	// say that Can queen at x2 row is placed at y2 column.
-	// for finding the column for x2 row, we will check all the columns for
-	// all the rows till x2-1.
+
+int legal(int x2, int y2, int *result) {
 	for (int i = 0; i < x2; i++) {
-		//result[i] == y2 => columns are same
-		//|i - x2| == |result[i] - y2| => in diagonals.
-		if ((result[i] == y2)	|| (abs(i - x2) == abs(result[i] - y2))) {
+
+		if ((result[i] == y2)	|| (absVal(i - x2) == absVal(result[i] - y2))) {
 			return 0;
 		}
 	}
 	return 1;
 }
 
-void print(int * result){
-  for(int i = 0; i < 6; i++){
-    printf("%d\n", result[i]);
+void printSolution(int * result, int size){
+  for(int i = 0; i < size; i++){
+    for(int y = 0; y < result[i]; y++){
+      printf(".");
+    }
+    printf("%d", result[i]);
+    for(int y = result[i]+1; y < size; y++){
+      printf(".");
+    }
+    printf("\n");
   }
 }
 
-void placeQueens(int x, int size, int * result) {
+
+void placeQueens(int x, int size, int * result, int first) {
 	for (int i = 0; i < size; i++) {
 		//check if queen at xth row can be placed at i-th column.
-		if (canPlace(x, i, result)) {
+		if (legal(x, i, result)) {
 			result[x] = i; // place the queen at this position.
 			if (x == size - 1) {
           printf("Solution found:\n");
-          print(result);
+          printSolution(result, size);
+          count++;
+          if(count > 2)
+            exit(0);
 			}
-			placeQueens(x + 1, size, result);
+			placeQueens(x + 1, size, result, first);
 		}
 	}
 }
+/*
 
+procedure AC-1
+Q ← {(V i , V j ) ∈ arcs(G), i ≠ j};
+repeat
+  CHANGE ← false;
+  for each (V i , V j ) ∈ Q do
+    CHANGE ← (REVISE(V i , V j ) or CHANGE);
+  endfor;
+until not(CHANGE);
+end_AC
+
+*/
 int main() {
-	int n = 6;
+  int n, q;
+  printf("Insert n size:\n");
+  std::cin >> n;
+  printf("Insert first Queen Location:\n");
+  std::cin >> q;
 	int result[n];
-  result[0] = 3;
-	placeQueens(0, n, result);
+  result[0] = q;
+  placeQueens(1, n, result, 0);
 }
