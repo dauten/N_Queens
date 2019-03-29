@@ -32,51 +32,38 @@ int conflict(int x1, int y1, int result[], int size){
   return c;
 }
 void printSolution(int result[], int size){
+
   for(int i = 0; i < size; i++){
     for(int y = 0; y < result[i]; y++){
-      printf(". ");
+      printf(".");
     }
-    if(conflict(i, result[i], result, size))
-      printf("X ");
-    else
-      printf("%d ", result[i]);
+
+    printf("O", result[i]);
+
+
     for(int y = result[i]+1; y < size; y++){
-      printf(". ");
+      printf(".");
     }
     printf("\n");
   }
 }
 
-void matrixHackA(int result[], int size){
-  for(int i = size-1; i >= 0; i--){
-    for(int y = 0; y < result[i]; y++){
-      printf(". ");
-    }
-    if(conflict(i, result[i], result, size))
-      printf("X ");
-    else
-      printf("%d ", result[i]);
-    for(int y = result[i]+1; y < size; y++){
-      printf(". ");
-    }
-    printf("\n");
-  }
-}
+std::ofstream fout("nqueen.out");
 
-void matrixHackB(int result[], int size){
-  for(int i = size-1; i >= 0; i--){
-    for(int y = size-1; y > result[i]; y--){
-      printf(". ");
-    }
-    if(conflict(i, result[i], result, size))
-      printf("X ");
-    else
-      printf("%d ", result[i]);
-    for(int y = result[i]-1; y >= 0; y--){
-      printf(". ");
-    }
-    printf("\n");
-  }
+void print1solution(int result[], int size, int num)
+{
+	fout << num << std::endl;
+	for (int r=1;r<=size;r++)
+	{
+	  for (int c=1;c<=size;c++)
+		  if (result[r]==c)
+			  fout << "O";
+		  else
+			  fout << ".";
+	  fout << std::endl;
+	}
+	fout << std::endl << std::endl;
+
 }
 
 
@@ -156,9 +143,7 @@ int main() {
   printf("Insert n size:\n");
   std::cin >> n;
   printf("Insert first Queen Location's x:\n");
-  std::cin >> x;
-  printf("Insert first Queen Location's y:\n");
-  std::cin >> y;
+  std::cin >> x >> y;
   int result[n];
 //  result[n];
 
@@ -183,6 +168,7 @@ int main() {
     if(legalBoard(result, n)){
       printSolution(result, n);
       solutions++;
+      print1solution(result, n, solutions);
       printf("=====\n");
 
     }
