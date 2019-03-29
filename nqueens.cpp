@@ -103,29 +103,6 @@ int legalBoard(int result[], int length){
   return 1;
 }
 
-//given blank board, fill it with queens randomly.
-//conflicts matrix is filled with number of queens that
-//threaten that particular space
-int generateBoard(int result[], int size){
-  int i;
-  for(i = 0; i < size; i++ ){
-    result[i] = i;
-  }
-
-  int a, b;
-  for(i = 0; i < size; i++){
-    a = rand();
-    a = a % size;
-    b = rand();
-    b = b % size;
-
-    int temp = result[a];
-    result[a] = result[b];
-    result[b] = temp;
-  }
-}
-
-
 //returns the column of result[row] with the fewest conflicts
 int safestCol(int result[], int size, int row){
   int min = 1000000;
@@ -141,40 +118,76 @@ int safestCol(int result[], int size, int row){
 }
 
 
+//given blank board, fill it with queens greedily.
+//conflicts matrix is filled with number of queens that
+//threaten that particular space
+void generateBoard(int result[], int size, int initx, int inity){
+  int i;
+
+  result[initx] = inity;
+
+  int a, b;
+
+  for(i = 0; i < initx; i++){
+    //assign value to result[i] with fewest conflicts
+    result[i] = safestCol(result, size, i);
+  }
+  for(i = initx+1; i < size; i++){
+    //assign value to result[i] with fewest conflicts
+    result[i] = safestCol(result, size, i);
+  }
+  for(i = 0; i < size; i++){
+    a = rand();
+    a = a % size;
+    b = rand();
+    b = b % size;
+
+    int temp = result[a];
+    result[a] = result[b];
+    result[b] = temp;
+  }
+}
+
+
+
 int main() {
   int n, q, x, y;
   srand(time(NULL));   // Initialization, should only be called once.
   printf("Insert n size:\n");
   std::cin >> n;
-  printf("Insert first Queen Location:\n");
-  //std::cin >> q;
+  printf("Insert first Queen Location's x:\n");
+  std::cin >> x;
+  printf("Insert first Queen Location's y:\n");
+  std::cin >> y;
   int result[n];
 //  result[n];
 
-
+  int solutions = 0;
   int a;
-  while(1){
-    generateBoard(result, n);
-    int patience = 500;
+  while(solutions < 3){
+    generateBoard(result, n, x, y);
+    int patience = 1000;
     while(!legalBoard(result, n) && patience--){
       a = rand() % n;
       //printf("safest column of %dth row would be %d\n", a, safestCol(result, n, a));
-      result[a] = safestCol(result, n, a);
-      //printSolution(result, n);
+      if(a != x){
+  //      printf("a is %d x is %d y is %d\n", a, x, y);
+        result[a] = safestCol(result, n, a);
+      }
+
+      result[x] = y;
+            //printSolution(result, n);
 
     }
 
     if(legalBoard(result, n)){
       printSolution(result, n);
+      solutions++;
       printf("=====\n");
-      matrixHackA(result, n);
-      printf("=====\n");
-      matrixHackB(result, n);
-      printf("We did it!\n");
-      return 0;
+
     }
     else{
-      printf("Giving up and starting over...!\n");
+    //  printf("Giving up and starting over...!\n");
     }
   }
 
