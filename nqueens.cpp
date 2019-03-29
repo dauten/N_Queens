@@ -8,19 +8,6 @@
 
 static int count = 0;
 
-void printSolution(int result[], int size){
-  for(int i = 0; i < size; i++){
-    for(int y = 0; y < result[i]; y++){
-      printf(". ");
-    }
-    printf("%d ", result[i]);
-    for(int y = result[i]+1; y < size; y++){
-      printf(". ");
-    }
-    printf("\n");
-  }
-}
-
 int absVal(int i){
   if(i < 0)
     return (i*-1);
@@ -28,6 +15,38 @@ int absVal(int i){
   else
     return i;
 }
+int conflict(int x1, int y1, int result[], int size){
+  int c, x, y = 0;
+  c=0;
+//  printf("c is now %d\n", c);
+  for(x = 0; x < size; x++){
+    if(x != x1){
+      //if this is a different space (we don't want to cound collisions wit ourself)
+      if(x == x1 || y1 == result[x] || absVal(x-x1)==absVal(result[x]-y1)){
+        c++;
+  //      printf("c is now %d\n", c);
+      }
+    }
+  }
+  //printf("c is %d\n", c);
+  return c;
+}
+void printSolution(int result[], int size){
+  for(int i = 0; i < size; i++){
+    for(int y = 0; y < result[i]; y++){
+      printf(". ");
+    }
+    if(conflict(i, result[i], result, size))
+      printf("X ");
+    else
+      printf("%d ", result[i]);
+    for(int y = result[i]+1; y < size; y++){
+      printf(". ");
+    }
+    printf("\n");
+  }
+}
+
 
 int legal(int x2, int y2, int result[]) {
 	for (int i = 0; i < x2; i++) {
@@ -40,22 +59,6 @@ int legal(int x2, int y2, int result[]) {
 	return 1;
 }
 
-int conflict(int x1, int y1, int result[], int size){
-  int c, x, y = 0;
-  c=0;
-//  printf("c is now %d\n", c);
-  for(x = 0; x < size; x++){
-    if(x != x1 || y1 != result[x]){
-      //if this is a different space (we don't want to cound collisions wit ourself)
-      if(x == x1 || y1 == result[x] || absVal(x-x1)==absVal(result[x]-y1)){
-        c++;
-  //      printf("c is now %d\n", c);
-      }
-    }
-  }
-  printf("c is %d\n", c);
-  return c;
-}
 
 int legalBoard(int result[], int length){
   int valid = 1;
@@ -115,23 +118,28 @@ int main() {
   //std::cin >> q;
   int result[n];
 //  result[n];
-  generateBoard(result, n);
+
 
   int a;
-  int patience = 10000;
-  while(!legalBoard(result, n) && patience--){
-    a = rand() % n;
-    printf("safest column of %dth row would be %d\n", a, safestCol(result, n, a));
-    result[a] = safestCol(result, n, a);
-    printSolution(result, n);
+  while(1){
+    generateBoard(result, n);
+    int patience = 500;
+    while(!legalBoard(result, n) && patience--){
+      a = rand() % n;
+      //printf("safest column of %dth row would be %d\n", a, safestCol(result, n, a));
+      result[a] = safestCol(result, n, a);
+      //printSolution(result, n);
 
-  }
+    }
 
-  if(legalBoard(result, n)){
-    printf("We did it!\n");
-  }
-  else{
-    printf("I give up!\n");
+    if(legalBoard(result, n)){
+      printSolution(result, n);
+      printf("We did it!\n");
+      return 0;
+    }
+    else{
+      printf("Giving up and starting over...!\n");
+    }
   }
 
 }
