@@ -47,6 +47,38 @@ void printSolution(int result[], int size){
   }
 }
 
+void matrixHackA(int result[], int size){
+  for(int i = size-1; i >= 0; i--){
+    for(int y = 0; y < result[i]; y++){
+      printf(". ");
+    }
+    if(conflict(i, result[i], result, size))
+      printf("X ");
+    else
+      printf("%d ", result[i]);
+    for(int y = result[i]+1; y < size; y++){
+      printf(". ");
+    }
+    printf("\n");
+  }
+}
+
+void matrixHackB(int result[], int size){
+  for(int i = size-1; i >= 0; i--){
+    for(int y = size-1; y > result[i]; y--){
+      printf(". ");
+    }
+    if(conflict(i, result[i], result, size))
+      printf("X ");
+    else
+      printf("%d ", result[i]);
+    for(int y = result[i]-1; y >= 0; y--){
+      printf(". ");
+    }
+    printf("\n");
+  }
+}
+
 
 int legal(int x2, int y2, int result[]) {
 	for (int i = 0; i < x2; i++) {
@@ -134,6 +166,10 @@ int main() {
 
     if(legalBoard(result, n)){
       printSolution(result, n);
+      printf("=====\n");
+      matrixHackA(result, n);
+      printf("=====\n");
+      matrixHackB(result, n);
       printf("We did it!\n");
       return 0;
     }
